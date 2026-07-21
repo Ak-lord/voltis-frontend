@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ─── TOKENS LIGHT (défaut) ─────────────────────────────── */
+:root {
+  --safe-top: max(env(safe-area-inset-top), 16px);
+
+  /* Surfaces */
+  --bg-main:     #F6F8FB;
+  --bg-surface:  #FFFFFF;
+  --bg-surface2: #EEF2F8;
+  --bg-topbar:   #FFFFFF;
+
+  /* Bordures */
+  --border:     #DDE5EF;
+  --border-sub: #ECF1F8;
+
+  /* Texte */
+  --text-primary:   #0F1A2E;
+  --text-secondary: #4E5E7A;
+  --text-tertiary:  #8E9EBA;
+
+  /* Brand */
+  --brand:    #2563EB;
+  --brand-bg: #EFF6FF;
+  --brand-bd: rgba(37, 99, 235, 0.25);
+
+  /* Coupure */
+  --red:    #DC2626;
+  --red-bg: #FEF2F2;
+  --red-bd: #FECACA;
+
+  /* Rétabli */
+  --green:    #16A34A;
+  --green-bg: #F0FDF4;
+  --green-bd: #BBF7D0;
+
+  /* Incertain */
+  --yellow:    #D97706;
+  --yellow-bg: #FFFBEB;
+  --yellow-bd: #FDE68A;
+
+  /* Ombres */
+  --sh-sm: 0 1px 3px rgba(15, 26, 46, .07), 0 1px 2px rgba(15, 26, 46, .04);
+  --sh-md: 0 4px 16px rgba(15, 26, 46, .08), 0 2px 6px rgba(15, 26, 46, .04);
+}
+
+/* ─── TOKENS DARK (préférence OS) ───────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-main:     #0A0A0A;
+    --bg-surface:  #141414;
+    --bg-surface2: #1E1E1E;
+    --bg-topbar:   #141414;
+    --border:     #2A2A2A;
+    --border-sub: #222222;
+    --text-primary:   #F5F5F5;
+    --text-secondary: #A0A0A0;
+    --text-tertiary:  #555555;
+    --brand:    #3B82F6;
+    --brand-bg: #0F1E3A;
+    --brand-bd: rgba(59, 130, 246, 0.25);
+    --red:    #EF4444;
+    --red-bg: #1A0808;
+    --red-bd: #5C1A1A;
+    --green:    #22C55E;
+    --green-bg: #061408;
+    --green-bd: #0F3D1A;
+    --yellow:    #F59E0B;
+    --yellow-bg: #150D02;
+    --yellow-bd: #4D2E00;
+    --sh-sm: 0 1px 3px rgba(0, 0, 0, .5);
+    --sh-md: 0 4px 16px rgba(0, 0, 0, .6);
+  }
+}
+
+/* ─── TOKENS DARK (manuel via data-theme) ───────────────── */
+:root[data-theme="dark"] {
+  --bg-main:     #0A0A0A;
+  --bg-surface:  #141414;
+  --bg-surface2: #1E1E1E;
+  --bg-topbar:   #141414;
+  --border:     #2A2A2A;
+  --border-sub: #222222;
+  --text-primary:   #F5F5F5;
+  --text-secondary: #A0A0A0;
+  --text-tertiary:  #555555;
+  --brand:    #3B82F6;
+  --brand-bg: #0F1E3A;
+  --brand-bd: rgba(59, 130, 246, 0.25);
+  --red:    #EF4444;
+  --red-bg: #1A0808;
+  --red-bd: #5C1A1A;
+  --green:    #22C55E;
+  --green-bg: #061408;
+  --green-bd: #0F3D1A;
+  --yellow:    #F59E0B;
+  --yellow-bg: #150D02;
+  --yellow-bd: #4D2E00;
+  --sh-sm: 0 1px 3px rgba(0, 0, 0, .5);
+  --sh-md: 0 4px 16px rgba(0, 0, 0, .6);
+}
+
+/* ─── TOKENS LIGHT (manuel via data-theme) ──────────────── */
+:root[data-theme="light"] {
+  --bg-main:     #F6F8FB;
+  --bg-surface:  #FFFFFF;
+  --bg-surface2: #EEF2F8;
+  --bg-topbar:   #FFFFFF;
+  --border:     #DDE5EF;
+  --border-sub: #ECF1F8;
+  --text-primary:   #0F1A2E;
+  --text-secondary: #4E5E7A;
+  --text-tertiary:  #8E9EBA;
+  --brand:    #2563EB;
+  --brand-bg: #EFF6FF;
+  --brand-bd: rgba(37, 99, 235, 0.25);
+  --red:    #DC2626;
+  --red-bg: #FEF2F2;
+  --red-bd: #FECACA;
+  --green:    #16A34A;
+  --green-bg: #F0FDF4;
+  --green-bd: #BBF7D0;
+  --yellow:    #D97706;
+  --yellow-bg: #FFFBEB;
+  --yellow-bd: #FDE68A;
+  --sh-sm: 0 1px 3px rgba(15, 26, 46, .07), 0 1px 2px rgba(15, 26, 46, .04);
+  --sh-md: 0 4px 16px rgba(15, 26, 46, .08), 0 2px 6px rgba(15, 26, 46, .04);
+}
+
+/* ─── BASE ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+html {
+  height: -webkit-fill-available;
+}
+
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100dvh;
+  background: var(--bg-main);
+}
+
+/* ─── SCROLLBAR ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ─── ANIMATIONS ────────────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+/* ─── SKELETON LOADING ──────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface2) 25%,
+    var(--border-sub)  50%,
+    var(--bg-surface2) 75%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
