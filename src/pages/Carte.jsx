@@ -137,11 +137,11 @@ export default function Carte() {
 
         {loading && !quartiers.length && (
           <div className="space-y-2 pt-2">
-            {[1, 2, 3, 4, 5].map(i => (
+            {Array.from({ length: 10 }, (_, i) => (
               <div
                 key={i}
                 className="skeleton rounded-[12px]"
-                style={{ height: '68px', opacity: 1 - i * 0.12 }}
+                style={{ height: '68px', opacity: Math.max(1 - i * 0.07, 0.2) }}
               />
             ))}
           </div>
