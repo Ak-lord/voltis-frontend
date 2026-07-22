@@ -14,12 +14,7 @@ export default function MonQuartier() {
     () => localStorage.getItem('voltis_mon_quartier') ?? ''
   )
 
-  useEffect(() => {
-    if (quartierDetecte && !quartierId) {
-      setQuartierId(quartierDetecte.id)
-      localStorage.setItem('voltis_mon_quartier', quartierDetecte.id)
-    }
-  }, [quartierDetecte, quartierId])
+  // Ne pas auto-sélectionner — l'utilisateur doit toujours confirmer son quartier
 
   const quartierSelectionne = quartiers.find(q => q.id === quartierId)
 
@@ -49,16 +44,28 @@ export default function MonQuartier() {
         >
           {geoStatus === 'ok' && quartierDetecte && (
             <div
-              className="flex items-center gap-2 mb-3 pb-3"
+              className="flex items-center justify-between gap-2 mb-3 pb-3"
               style={{ borderBottom: '1px solid var(--border)' }}
             >
-              <MapPin size={13} strokeWidth={2} style={{ color: 'var(--brand)', flexShrink: 0 }} />
-              <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                Détecté automatiquement :{' '}
-                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
-                  {quartierDetecte.nom}
-                </span>
-              </p>
+              <div className="flex items-center gap-2">
+                <MapPin size={13} strokeWidth={2} style={{ color: 'var(--brand)', flexShrink: 0 }} />
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  GPS suggère :{' '}
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
+                    {quartierDetecte.nom}
+                  </span>
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setQuartierId(quartierDetecte.id)
+                  localStorage.setItem('voltis_mon_quartier', quartierDetecte.id)
+                }}
+                className="text-xs font-semibold px-2 py-1 rounded-[6px] shrink-0"
+                style={{ background: 'var(--brand-bg)', color: 'var(--brand)', border: '1px solid var(--brand-bd)' }}
+              >
+                Utiliser
+              </button>
             </div>
           )}
 
