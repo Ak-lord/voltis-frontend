@@ -269,6 +269,10 @@ export default function Alertes() {
             </div>
           ))}
         </div>
+        {/* Signature */}
+        <p className="text-center py-2" style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
+          Conçu par SAWADOGO Abdoul Aziz
+        </p>
       </div>
     </div>
   )
