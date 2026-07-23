@@ -10,7 +10,7 @@ const NAV = [
 export default function BottomNav() {
   return (
     <nav
-      className="shrink-0 flex"
+      className="fixed bottom-0 left-0 right-0 z-50 flex"
       style={{
         background:    'var(--bg-topbar)',
         borderTop:     '1px solid var(--border)',
