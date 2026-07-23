@@ -14,7 +14,7 @@ export default function BottomNav() {
       style={{
         background:    'var(--bg-topbar)',
         borderTop:     '1px solid var(--border)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
       }}
     >
       {NAV.map(({ to, Icon, label }) => (

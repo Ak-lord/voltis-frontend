@@ -127,8 +127,19 @@ export default function MonQuartier() {
   /* ── Spinner initial ────────────────────────────────────────────── */
   if (loading && !quartiers.length) {
     return (
-      <div className="flex items-center justify-center min-h-full">
-        <div className="w-6 h-6 rounded-full border-2 border-t-transparent" style={{ borderColor: 'var(--brand)', borderTopColor: 'transparent', animation: 'spin-slow 0.8s linear infinite' }} />
+      <div className="flex flex-col items-center justify-center gap-5 px-6"
+        style={{ minHeight: 'calc(100dvh - 80px)', paddingTop: 'calc(var(--safe-top) + 12px)' }}>
+        <div className="w-16 h-16 rounded-[20px] flex items-center justify-center"
+          style={{ background: 'var(--brand-bg)', border: '1px solid var(--brand-bd)' }}>
+          <Zap size={26} strokeWidth={1.8} style={{ color: 'var(--brand)' }} />
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>Voltis</p>
+          <p className="text-sm mt-1.5" style={{ color: 'var(--text-tertiary)' }}>Connexion en cours…</p>
+          <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)', opacity: 0.6 }}>Le serveur se réveille, attendez quelques secondes</p>
+        </div>
+        <div className="w-7 h-7 rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--brand)', borderTopColor: 'transparent', animation: 'spin-slow 0.8s linear infinite' }} />
       </div>
     )
   }
