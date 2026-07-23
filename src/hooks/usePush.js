@@ -1,58 +1,50 @@
 import { useState, useCallback } from 'react'
 import api from '../api/client'
 
-// Firebase est initialisé dans firebase.js — importé conditionnellement
-// pour éviter les erreurs si les clés ne sont pas configurées
-let getTokenFn = null
-let messagingInstance = null
+const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY
 
-async function loadFirebase() {
-  if (getTokenFn) return { getToken: getTokenFn, messaging: messagingInstance }
-  try {
-    const { initializeApp } = await import('firebase/app')
-    const { getMessaging, getToken } = await import('firebase/messaging')
-    const firebaseConfig = {
-      apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-      projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
-      storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-      appId:             import.meta.env.VITE_FIREBASE_APP_ID,
-    }
-    const app = initializeApp(firebaseConfig, 'voltis')
-    messagingInstance = getMessaging(app)
-    getTokenFn = getToken
-    return { getToken, messaging: messagingInstance }
-  } catch {
-    return null
-  }
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = atob(base64)
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)))
 }
 
 export function usePush() {
-  const [token, setToken] = useState(() => localStorage.getItem('voltis_fcm_token'))
+  const [endpoint, setEndpoint] = useState(() => localStorage.getItem('voltis_push_endpoint'))
   const [status, setStatus] = useState('idle') // idle | loading | granted | denied | unsupported
 
   const subscribe = useCallback(async (quartierId) => {
-    if (!('Notification' in window)) { setStatus('unsupported'); return false }
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      setStatus('unsupported')
+      return false
+    }
+    if (!VAPID_PUBLIC_KEY) {
+      setStatus('unsupported')
+      return false
+    }
 
     setStatus('loading')
     const permission = await Notification.requestPermission()
     if (permission !== 'granted') { setStatus('denied'); return false }
 
-    const firebase = await loadFirebase()
-    if (!firebase || !import.meta.env.VITE_VAPID_KEY) {
-      // Firebase pas configuré — on ignore silencieusement
-      setStatus('unsupported')
-      return false
-    }
-
     try {
-      const fcmToken = await firebase.getToken(firebase.messaging, {
-        vapidKey: import.meta.env.VITE_VAPID_KEY,
+      const reg = await navigator.serviceWorker.ready
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       })
-      await api.post('/push/subscribe', { quartier_id: quartierId, fcm_token: fcmToken })
-      localStorage.setItem('voltis_fcm_token', fcmToken)
-      setToken(fcmToken)
+
+      const json = sub.toJSON()
+      await api.post('/push/subscribe', {
+        quartier_id: quartierId,
+        endpoint:    json.endpoint,
+        p256dh:      json.keys.p256dh,
+        auth:        json.keys.auth,
+      })
+
+      localStorage.setItem('voltis_push_endpoint', json.endpoint)
+      setEndpoint(json.endpoint)
       setStatus('granted')
       return true
     } catch {
@@ -62,15 +54,18 @@ export function usePush() {
   }, [])
 
   const unsubscribe = useCallback(async () => {
-    const t = localStorage.getItem('voltis_fcm_token')
-    if (!t) return
+    const ep = localStorage.getItem('voltis_push_endpoint')
+    if (!ep) return
     try {
-      await api.delete('/push/unsubscribe', { data: { fcm_token: t } })
-      localStorage.removeItem('voltis_fcm_token')
-      setToken(null)
+      const reg = await navigator.serviceWorker.ready
+      const sub = await reg.pushManager.getSubscription()
+      if (sub) await sub.unsubscribe()
+      await api.delete('/push/unsubscribe', { data: { endpoint: ep } })
+      localStorage.removeItem('voltis_push_endpoint')
+      setEndpoint(null)
       setStatus('idle')
     } catch {}
   }, [])
 
-  return { token, status, subscribe, unsubscribe }
+  return { endpoint, status, subscribe, unsubscribe }
 }

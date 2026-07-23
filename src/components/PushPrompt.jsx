@@ -3,12 +3,12 @@ import { Bell, X } from 'lucide-react'
 import { usePush } from '../hooks/usePush'
 
 export default function PushPrompt({ quartierId, quartierNom }) {
-  const { token, status, subscribe } = usePush()
+  const { endpoint, status, subscribe } = usePush()
   const [dismissed, setDismissed] = useState(
     () => localStorage.getItem('voltis_push_dismissed') === '1'
   )
 
-  if (dismissed || !quartierId || token) return null
+  if (dismissed || !quartierId || endpoint) return null
 
   const handleSubscribe = async () => {
     const ok = await subscribe(quartierId)
