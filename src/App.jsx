@@ -11,8 +11,8 @@ export default function App() {
   return (
     <ThemeProvider>
     <BrowserRouter>
-      <div className="flex flex-col" style={{ background: 'var(--bg-main)', height: '100dvh', overflow: 'hidden' }}>
-        <main className="flex-1 overflow-y-auto" style={{ paddingBottom: 'calc(72px + max(env(safe-area-inset-bottom), 8px))' }}>
+      <div className="flex flex-col" style={{ background: 'var(--bg-main)', height: '100dvh' }}>
+        <main className="flex-1 overflow-y-auto">
           <Routes>
             <Route path="/"               element={<MonQuartier />} />
             <Route path="/carte"          element={<Carte />} />

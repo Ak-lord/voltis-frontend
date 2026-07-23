@@ -137,7 +137,7 @@ export default function Carte() {
         <div style={{
           position:   'fixed',
           top:        `${headerH}px`,
-          bottom:     'calc(64px + env(safe-area-inset-bottom))',
+          bottom:     'calc(58px + max(env(safe-area-inset-bottom), 8px))',
           left:       0,
           right:      0,
           zIndex:     10,
