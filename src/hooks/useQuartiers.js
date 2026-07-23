@@ -2,20 +2,29 @@ import { useState, useEffect, useCallback } from 'react'
 import api from '../api/client'
 
 const POLL_INTERVAL = 30_000
+const CACHE_TTL     = 60_000
+
+// Cache module-level : survit aux navigations React Router
+let _cache     = null
+let _cacheTime = 0
 
 export function useQuartiers() {
-  const [quartiers, setQuartiers] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [lastUpdate, setLastUpdate] = useState(null)
+  const hasCache = _cache && (Date.now() - _cacheTime < CACHE_TTL)
+
+  const [quartiers, setQuartiers] = useState(hasCache ? _cache : [])
+  const [loading, setLoading]     = useState(!hasCache)
+  const [error, setError]         = useState(null)
+  const [lastUpdate, setLastUpdate] = useState(hasCache ? new Date(_cacheTime) : null)
 
   const fetch = useCallback(async () => {
     try {
       const { data } = await api.get('/quartiers/statuts')
+      _cache     = data
+      _cacheTime = Date.now()
       setQuartiers(data)
       setLastUpdate(new Date())
       setError(null)
-    } catch (e) {
+    } catch {
       setError('Impossible de récupérer les statuts.')
     } finally {
       setLoading(false)
@@ -33,8 +42,8 @@ export function useQuartiers() {
 
 export function useQuartier(id) {
   const [quartier, setQuartier] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [loading, setLoading]   = useState(true)
+  const [error, setError]       = useState(null)
 
   const fetch = useCallback(async () => {
     if (!id) return

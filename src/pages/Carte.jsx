@@ -197,10 +197,13 @@ export default function Carte() {
 }
 
 /* ── Composant carte Leaflet ───────────────────────── */
+const LABEL_MIN_ZOOM = 13
+
 function MapView({ quartiers }) {
   const mapRef         = useRef(null)
   const mapInstanceRef = useRef(null)
   const markersRef     = useRef([])
+  const labelsRef      = useRef([])
   const navigate       = useNavigate()
 
   useEffect(() => {
@@ -226,6 +229,15 @@ function MapView({ quartiers }) {
       L.control.zoom({ position: 'bottomright' }).addTo(map)
       L.control.attribution({ prefix: '© OpenStreetMap · © CARTO' }).addTo(map)
 
+      // Affiche/masque les labels selon le zoom
+      map.on('zoomend', () => {
+        const z = map.getZoom()
+        labelsRef.current.forEach(l => {
+          if (z >= LABEL_MIN_ZOOM) { if (!map.hasLayer(l)) l.addTo(map) }
+          else                      { if (map.hasLayer(l))  l.remove()  }
+        })
+      })
+
       mapInstanceRef.current = map
       setTimeout(() => map.invalidateSize(), 100)
     })
@@ -249,6 +261,8 @@ function MapView({ quartiers }) {
 
       markersRef.current.forEach(m => m.remove())
       markersRef.current = []
+      labelsRef.current.forEach(l => l.remove())
+      labelsRef.current = []
 
       // Boîte englobante serrée autour d'Ouagadougou [minLon, minLat, maxLon, maxLat]
       const EXTENT = [-1.68, 12.25, -1.39, 12.50]
@@ -291,7 +305,7 @@ function MapView({ quartiers }) {
         poly.addTo(map)
         markersRef.current.push(poly)
 
-        // Label centré sur la zone
+        // Label centré — visible seulement si zoom >= LABEL_MIN_ZOOM
         const cx = cell.reduce((acc, [x]) => acc + x, 0) / cell.length
         const cy = cell.reduce((acc, [, y]) => acc + y, 0) / cell.length
 
@@ -300,22 +314,25 @@ function MapView({ quartiers }) {
             className: '',
             html: `<div style="
               font-family:-apple-system,sans-serif;
-              font-size:9px;
+              font-size:8px;
               font-weight:800;
               color:#111827;
+              max-width:72px;
+              overflow:hidden;
+              text-overflow:ellipsis;
               white-space:nowrap;
-              text-shadow:0 0 4px #fff,0 0 4px #fff,0 0 4px #fff;
+              text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff;
               pointer-events:none;
               text-align:center;
             ">${q.nom}</div>`,
-            iconSize:   [80, 14],
-            iconAnchor: [40, 7],
+            iconSize:   [72, 13],
+            iconAnchor: [36, 6],
           }),
           interactive: false,
           zIndexOffset: 100,
         })
-        label.addTo(map)
-        markersRef.current.push(label)
+        if (map.getZoom() >= LABEL_MIN_ZOOM) label.addTo(map)
+        labelsRef.current.push(label)
       })
     })
   }, [quartiers, navigate])
