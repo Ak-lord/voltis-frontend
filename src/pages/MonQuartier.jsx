@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Zap, CheckCircle, HelpCircle, MapPin, ChevronRight, ChevronDown } from 'lucide-react'
 import { useQuartiers } from '../hooks/useQuartiers'
-import { useGeolocation } from '../hooks/useGeolocation'
 import { dureeDepuis } from '../utils/statut'
 import api from '../api/client'
 
@@ -26,7 +25,6 @@ function getPosition() {
 export default function MonQuartier() {
   const navigate = useNavigate()
   const { quartiers, loading } = useQuartiers()
-  const { quartierDetecte, status: geoStatus } = useGeolocation(quartiers)
 
   const [quartierId, setQuartierId] = useState(
     () => localStorage.getItem('voltis_mon_quartier') ?? ''
@@ -93,20 +91,6 @@ export default function MonQuartier() {
 
           {/* Sélecteur */}
           <div className="flex flex-col gap-3">
-            {geoStatus === 'ok' && quartierDetecte && (
-              <button
-                onClick={() => choisir(quartierDetecte.id)}
-                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] text-left"
-                style={{ background: 'var(--brand-bg)', border: '1px solid var(--brand-bd)' }}
-              >
-                <MapPin size={16} strokeWidth={2} style={{ color: 'var(--brand)', flexShrink: 0 }} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold" style={{ color: 'var(--brand)' }}>Utiliser ma position GPS</p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>{quartierDetecte.nom} — Secteur {quartierDetecte.secteur}</p>
-                </div>
-                <ChevronRight size={14} strokeWidth={2} style={{ color: 'var(--brand)', flexShrink: 0 }} />
-              </button>
-            )}
             <select
               value=""
               onChange={e => choisir(e.target.value)}
@@ -174,19 +158,6 @@ export default function MonQuartier() {
         {/* Sélecteur déroulant */}
         {showSelector && (
           <div className="rounded-[12px] overflow-hidden" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
-            {geoStatus === 'ok' && quartierDetecte && (
-              <button
-                onClick={() => choisir(quartierDetecte.id)}
-                className="w-full flex items-center gap-3 px-4 py-3 border-b text-left"
-                style={{ borderColor: 'var(--border)' }}
-              >
-                <MapPin size={14} strokeWidth={2} style={{ color: 'var(--brand)', flexShrink: 0 }} />
-                <div>
-                  <p className="text-xs font-semibold" style={{ color: 'var(--brand)' }}>Position GPS</p>
-                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{quartierDetecte.nom}</p>
-                </div>
-              </button>
-            )}
             <select
               value={quartierId}
               onChange={e => choisir(e.target.value)}
