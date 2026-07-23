@@ -24,8 +24,8 @@ export default function QuartierDetail() {
       >
         <button
           onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/')}
-          className="w-9 h-9 flex items-center justify-center rounded-[8px] shrink-0"
-          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+          className="flex items-center justify-center rounded-[10px] shrink-0"
+          style={{ width: '44px', height: '44px', background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
         >
           <ChevronLeft size={18} strokeWidth={2} />
         </button>
@@ -106,7 +106,7 @@ function StatutBloc({ quartier }) {
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: 'var(--text-tertiary)' }}>
-              Confiance communauté
+              Confirmations reçues
             </p>
             <p className="text-[10px] font-semibold" style={{ color: s.color }}>
               {quartier.nb_signalements ?? 0} / {PUSH_THRESHOLD}
@@ -128,10 +128,10 @@ function StatutBloc({ quartier }) {
           </div>
           <p className="text-[10px] mt-1.5" style={{ color: 'var(--text-tertiary)' }}>
             {confidence >= 1
-              ? 'Seuil atteint — notifications push envoyées'
+              ? 'Confirmé — les abonnés ont été alertés'
               : nbManquants === 0
-                ? 'En cours de vérification'
-                : `${nbManquants} signalement${nbManquants > 1 ? 's' : ''} de plus déclencheront les notifications push`}
+                ? 'En cours de vérification…'
+                : `Encore ${nbManquants} confirmation${nbManquants > 1 ? 's' : ''} pour alerter tout le monde`}
           </p>
         </div>
 
@@ -226,7 +226,7 @@ function HistoriqueSection({ historique }) {
                   }
                 </div>
                 <span className="text-sm flex-1 font-medium" style={{ color: isCoupure ? 'var(--red)' : 'var(--green)' }}>
-                  {isCoupure ? 'Coupure' : 'Rétablissement'}
+                  {isCoupure ? 'Courant coupé' : 'Courant revenu'}
                 </span>
                 <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
                   {formatRelative(h.created_at)}

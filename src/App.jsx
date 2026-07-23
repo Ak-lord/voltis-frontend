@@ -14,8 +14,8 @@ export default function App() {
       <div className="flex flex-col" style={{ background: 'var(--bg-main)', minHeight: '100dvh' }}>
         <main className="flex-1 overflow-y-auto" style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
           <Routes>
-            <Route path="/"               element={<Carte />} />
-            <Route path="/quartier"       element={<MonQuartier />} />
+            <Route path="/"               element={<MonQuartier />} />
+            <Route path="/carte"          element={<Carte />} />
             <Route path="/quartier/:id"   element={<QuartierDetail />} />
             <Route path="/signaler"       element={<Signaler />} />
             <Route path="/alertes"        element={<Alertes />} />

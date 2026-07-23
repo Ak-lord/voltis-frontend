@@ -1,11 +1,10 @@
 import { NavLink } from 'react-router-dom'
-import { Map, MapPin, Zap, Bell } from 'lucide-react'
+import { Home, Map, Bell } from 'lucide-react'
 
 const NAV = [
-  { to: '/',         Icon: Map,    label: 'Carte'        },
-  { to: '/quartier', Icon: MapPin, label: 'Mon quartier' },
-  { to: '/signaler', Icon: Zap,    label: 'Signaler'     },
-  { to: '/alertes',  Icon: Bell,   label: 'Alertes'      },
+  { to: '/',       Icon: Home, label: 'Accueil' },
+  { to: '/carte',  Icon: Map,  label: 'Carte'   },
+  { to: '/alertes',Icon: Bell, label: 'Alertes' },
 ]
 
 export default function BottomNav() {

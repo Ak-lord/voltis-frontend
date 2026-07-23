@@ -1,19 +1,19 @@
 export const STATUTS = {
   coupure: {
-    label:  'Coupure',
+    label:  'Coupé',
     color:  '#DC2626',
     bg:     '#FEF2F2',
     border: '#FECACA',
   },
   retabli: {
-    label:  'Rétabli',
+    label:  'Revenu',
     color:  '#16A34A',
     bg:     '#F0FDF4',
     border: '#BBF7D0',
   },
   incertain: {
-    label:  'Incertain',
-    color:  '#D97706',
+    label:  'Inconnu',
+    color:  '#B45309',
     bg:     '#FFFBEB',
     border: '#FDE68A',
   },

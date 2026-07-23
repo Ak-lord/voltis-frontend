@@ -38,7 +38,7 @@ export default function QuartierCard({ quartier }) {
           >
             {quartier.nom}
           </p>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
             Secteur {quartier.secteur}
             {quartier.nb_signalements > 0 && (
               <span>
