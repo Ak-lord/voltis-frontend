@@ -153,7 +153,7 @@ export default function MonQuartier() {
         </button>
       </header>
 
-      <div className="px-4 py-4 flex flex-col gap-3">
+      <div className="flex-1 px-4 py-4 flex flex-col gap-3">
 
         {/* Sélecteur déroulant */}
         {showSelector && (
@@ -173,7 +173,7 @@ export default function MonQuartier() {
 
         {/* Grand statut */}
         <div
-          className="rounded-[16px] py-8 px-4 flex flex-col items-center text-center gap-3"
+          className="flex-1 rounded-[16px] py-8 px-4 flex flex-col items-center justify-center text-center gap-3 min-h-[180px]"
           style={{ background: s.bg, border: `1px solid ${s.border}` }}
         >
           <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.7)' }}>
