@@ -217,7 +217,7 @@ function MapView({ quartiers }) {
         attributionControl: false,
       })
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         maxZoom:      19,
         subdomains:   'abcd',
         detectRetina: true,
@@ -272,7 +272,7 @@ function MapView({ quartiers }) {
           color:        '#ffffff',
           weight:       1.5,
           opacity:      0.85,
-          fillOpacity:  isCoupure ? 0.55 : 0.28,
+          fillOpacity:  isCoupure ? 0.60 : 0.38,
           smoothFactor: 1,
         })
 
