@@ -11,9 +11,10 @@ let _cacheTime = 0
 export function useQuartiers() {
   const hasCache = _cache && (Date.now() - _cacheTime < CACHE_TTL)
 
-  const [quartiers, setQuartiers] = useState(hasCache ? _cache : [])
-  const [loading, setLoading]     = useState(!hasCache)
-  const [error, setError]         = useState(null)
+  const [quartiers, setQuartiers]   = useState(hasCache ? _cache : [])
+  const [loading, setLoading]       = useState(!hasCache)
+  const [error, setError]           = useState(null)
+  const [isOffline, setIsOffline]   = useState(false)
   const [lastUpdate, setLastUpdate] = useState(hasCache ? new Date(_cacheTime) : null)
 
   const fetch = useCallback(async () => {
@@ -24,8 +25,12 @@ export function useQuartiers() {
       setQuartiers(data)
       setLastUpdate(new Date())
       setError(null)
+      setIsOffline(false)
     } catch {
-      setError('Impossible de récupérer les statuts.')
+      if (!_cache) {
+        setError('Pas de connexion. Vérifiez votre réseau.')
+      }
+      setIsOffline(true)
     } finally {
       setLoading(false)
     }
@@ -37,7 +42,7 @@ export function useQuartiers() {
     return () => clearInterval(id)
   }, [fetch])
 
-  return { quartiers, loading, error, lastUpdate, refresh: fetch }
+  return { quartiers, loading, error, isOffline, lastUpdate, refresh: fetch }
 }
 
 export function useQuartier(id) {

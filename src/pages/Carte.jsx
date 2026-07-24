@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Zap, RefreshCw, Map as MapIcon, List } from 'lucide-react'
 import { useQuartiers } from '../hooks/useQuartiers'
+import { useTheme } from '../hooks/useTheme'
 import QuartierCard from '../components/QuartierCard'
 import { formatRelative } from '../utils/statut'
 
@@ -19,7 +20,9 @@ const STATUS_STYLE = {
 }
 
 export default function Carte() {
-  const { quartiers, loading, error, lastUpdate, refresh } = useQuartiers()
+  const { quartiers, loading, error, isOffline, lastUpdate, refresh } = useQuartiers()
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [vue, setVue]             = useState('carte')
   const [filtre, setFiltre]       = useState('tous')
   const [recherche, setRecherche] = useState('')
@@ -143,7 +146,7 @@ export default function Carte() {
           zIndex:     10,
           overflow:   'hidden',
         }}>
-          <MapView quartiers={filtered} />
+          <MapView quartiers={filtered} isDark={isDark} />
 
           {/* Légende */}
           <div style={{
@@ -165,7 +168,13 @@ export default function Carte() {
       {/* ── Vue Liste ──────────────────────────────────── */}
       {vue === 'liste' && (
         <div className="flex-1 px-4 py-3 space-y-2">
-          {error && (
+          {isOffline && quartiers.length > 0 && (
+            <div className="rounded-[10px] px-4 py-2.5 text-xs text-center font-medium"
+              style={{ background: 'var(--bg-surface)', color: 'var(--text-tertiary)', border: '1px solid var(--border)' }}>
+              Hors ligne — données mises en cache
+            </div>
+          )}
+          {error && !quartiers.length && (
             <div className="rounded-[10px] p-4 text-sm text-center"
               style={{ background: 'var(--red-bg)', color: 'var(--red)', border: '1px solid var(--red-bd)' }}>
               {error}
@@ -198,10 +207,15 @@ export default function Carte() {
 
 /* ── Composant carte Leaflet ───────────────────────── */
 const LABEL_MIN_ZOOM = 13
+const TILES = {
+  light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  dark:  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+}
 
-function MapView({ quartiers }) {
+function MapView({ quartiers, isDark }) {
   const mapRef         = useRef(null)
   const mapInstanceRef = useRef(null)
+  const tileLayerRef   = useRef(null)
   const markersRef     = useRef([])
   const labelsRef      = useRef([])
   const navigate       = useNavigate()
@@ -220,7 +234,7 @@ function MapView({ quartiers }) {
         attributionControl: false,
       })
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      tileLayerRef.current = L.tileLayer(isDark ? TILES.dark : TILES.light, {
         maxZoom:      19,
         subdomains:   'abcd',
         detectRetina: true,
@@ -246,14 +260,34 @@ function MapView({ quartiers }) {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove()
         mapInstanceRef.current = null
+        tileLayerRef.current = null
       }
     }
   }, [])
+
+  // Swap tile layer when theme changes
+  useEffect(() => {
+    const map = mapInstanceRef.current
+    if (!map || !tileLayerRef.current) return
+    import('leaflet').then(mod => {
+      const L = mod.default
+      tileLayerRef.current.remove()
+      tileLayerRef.current = L.tileLayer(isDark ? TILES.dark : TILES.light, {
+        maxZoom:      19,
+        subdomains:   'abcd',
+        detectRetina: true,
+      }).addTo(map)
+    })
+  }, [isDark])
 
   useEffect(() => {
     if (!quartiers.length) return
 
     Promise.all([import('leaflet'), import('d3-delaunay')]).then(([leafletMod, d3Mod]) => {
+      const labelColor  = isDark ? '#f9fafb' : '#111827'
+      const labelShadow = isDark
+        ? '0 0 3px #000,0 0 3px #000,0 0 3px #000'
+        : '0 0 3px #fff,0 0 3px #fff,0 0 3px #fff'
       const L          = leafletMod.default
       const { Delaunay } = d3Mod
       const map        = mapInstanceRef.current
@@ -316,12 +350,12 @@ function MapView({ quartiers }) {
               font-family:-apple-system,sans-serif;
               font-size:8px;
               font-weight:800;
-              color:#111827;
+              color:${labelColor};
               max-width:72px;
               overflow:hidden;
               text-overflow:ellipsis;
               white-space:nowrap;
-              text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff;
+              text-shadow:${labelShadow};
               pointer-events:none;
               text-align:center;
             ">${q.nom}</div>`,
@@ -335,7 +369,7 @@ function MapView({ quartiers }) {
         labelsRef.current.push(label)
       })
     })
-  }, [quartiers, navigate])
+  }, [quartiers, navigate, isDark])
 
   return <div ref={mapRef} style={{ height: '100%', width: '100%' }} />
 }
