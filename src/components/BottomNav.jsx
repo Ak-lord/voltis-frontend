@@ -2,8 +2,8 @@ import { NavLink } from 'react-router-dom'
 import { Home, Map, Bell } from 'lucide-react'
 
 const NAV = [
-  { to: '/',       Icon: Home, label: 'Accueil' },
   { to: '/carte',  Icon: Map,  label: 'Carte'   },
+  { to: '/',       Icon: Home, label: 'Accueil' },
   { to: '/alertes',Icon: Bell, label: 'Alertes' },
 ]
 
